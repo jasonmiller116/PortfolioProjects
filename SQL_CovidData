@@ -1,0 +1,65 @@
+select * 
+from `portfolioprojectcovid-345617.CovidDeaths.deaths`
+where continent is not null
+order by 3,4;
+
+-- Select Data that we are going to be using, order by location and date
+-- Looking at Total Cases vs Total Deaths
+-- Shows likelihood of dying if your contract Covid in your country
+
+Select location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 as death_percentage
+from `portfolioprojectcovid-345617.CovidDeaths.deaths`
+where location = "United States" and continent is not null
+order by 1,2;
+
+-- Looking at Total Cases vs Population
+-- Shows what percentage of population got Covid
+Select location, date, total_cases, population, (total_cases/population)*100 as infected_percentage
+from `portfolioprojectcovid-345617.CovidDeaths.deaths`
+where location = "United States" and continent is not null
+order by 1,2;
+
+-- Looking at countries with highest infection rate compared to Population
+ 
+Select location, population, MAX(total_cases) as highest_infection_count, MAX((total_cases/population))*100 as population_infected_percentage
+from `portfolioprojectcovid-345617.CovidDeaths.deaths`
+--where location = "United States"
+--where continent is not null
+group by location, population
+order by population_infected_percentage desc;
+
+-- Showing countries with highest death count per population
+
+ Select location, Max(cast(total_deaths as int)) as total_death_count
+from `portfolioprojectcovid-345617.CovidDeaths.deaths`
+--where location = "United States"
+where continent is not null
+group by location
+order by total_death_count desc;
+
+-- Let's break things down by continent
+-- Showing the continents with the highest death count per population
+
+
+Select location, Max(cast(total_deaths as int)) as total_death_count
+from `portfolioprojectcovid-345617.CovidDeaths.deaths`
+--where location = "United States"
+where continent is null
+group by location
+order by total_death_count desc;
+
+-- Global Numbers
+
+Select date, sum(new_cases) as total_cases, sum(cast(new_deaths as int)) as total_deaths, sum(cast(new_deaths as int))/sum(new_cases)*100 as death_percentage
+from `portfolioprojectcovid-345617.CovidDeaths.deaths`
+--where location = "United States"
+where continent is not null
+group by date
+order by 1,2;
+
+Select sum(new_cases) as total_cases, sum(cast(new_deaths as int)) as total_deaths, sum(cast(new_deaths as int))/sum(new_cases)*100 as death_percentage
+from `portfolioprojectcovid-345617.CovidDeaths.deaths`
+--where location = "United States"
+where continent is not null
+--group by date
+order by 1,2;
